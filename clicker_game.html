@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VR CITY GAME - Тапалка 🎮</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            color: #333;
+        }
+
+        .container {
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .rules {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: left;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .rules h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .game-area {
+            margin-bottom: 30px;
+        }
+
+        .clicker-button {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px;
+            border: none;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            font-size: 60px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(245, 87, 108, 0.4);
+            transition: all 0.1s ease;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .clicker-button:active {
+            transform: scale(0.95);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .clicker-button:hover:not(:active) {
+            transform: scale(1.05);
+        }
+
+        .score-popup {
+            position: absolute;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+            pointer-events: none;
+            animation: float-up 1s ease-out forwards;
+        }
+
+        @keyframes float-up {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+        }
+
+        .combo {
+            font-size: 16px;
+            color: #f5576c;
+            margin-bottom: 15px;
+            font-weight: bold;
+            min-height: 24px;
+        }
+
+        .reward-box {
+            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .reward-box.show {
+            display: block;
+            animation: bounce 0.6s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .reward-box h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .promo-code {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            word-break: break-all;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            grid-column: span 2;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .leaderboard {
+            background: #f9f9f9;
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .leaderboard h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .leaderboard-item:nth-child(1) {
+            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+            color: white;
+            font-weight: bold;
+        }
+
+        .leaderboard-item:nth-child(2) {
+            background: #e8e8e8;
+        }
+
+        .leaderboard-item:nth-child(3) {
+            background: #f5f5f5;
+        }
+
+        .medal {
+            font-size: 18px;
+            margin-right: 8px;
+        }
+
+        .username-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            transition: border-color 0.3s;
+        }
+
+        .username-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .seasonal-info {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-bottom: 15px;
+            color: #856404;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .clicker-button {
+                width: 120px;
+                height: 120px;
+                font-size: 48px;
+            }
+
+            .stat-value {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 VR CITY GAME</h1>
+            <p>Тапалка на рекорд!</p>
+        </div>
+
+        <div class="rules">
+            <h3>📋 Правила:</h3>
+            <p>🎯 Играй, набирай очки и попади в топ!</p>
+            <p>🏆 Лучший игрок недели получит <strong>1 день PS5 БЕСПЛАТНО</strong></p>
+            <p>🎁 <strong>10% шанс</strong> получить промокод или скидку в наборе!</p>
+            <p>⚡ Чем больше тапов - тем больше очков!</p>
+        </div>
+
+        <div class="seasonal-info">
+            ⏰ Сезон: <strong>Неделя</strong> | Обновляется каждый понедельник
+        </div>
+
+        <input type="text" class="username-input" id="usernameInput" placeholder="Введи своё имя или ник 👤" maxlength="20">
+
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-label">Твой счёт</div>
+                <div class="stat-value" id="scoreValue">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Комбо 🔥</div>
+                <div class="stat-value" id="comboValue">1x</div>
+            </div>
+        </div>
+
+        <div class="game-area">
+            <div class="combo" id="comboText"></div>
+            <button class="clicker-button" id="clickerBtn">👆</button>
+        </div>
+
+        <div class="reward-box" id="rewardBox">
+            <h3>🎉 ПОБЕДА! 🎉</h3>
+            <p>Ты выиграл промокод/скидку!</p>
+            <div class="promo-code" id="promoCode"></div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn btn-secondary" id="resetBtn">🔄 Заново</button>
+            <button class="btn btn-secondary" id="shareBtn">📤 Поделиться</button>
+            <button class="btn btn-primary" id="submitBtn">📊 Отправить результат</button>
+        </div>
+
+        <div class="leaderboard" id="leaderboard">
+            <h3>🏆 Топ игроков на этой неделе</h3>
+            <div id="leaderboardList"></div>
+        </div>
+    </div>
+
+    <script>
+        // ===== ПРОМОКОДЫ =====
+        const promoCodes = [
+            { code: "GIFT-PS5-100", discount: "Скидка 100₽ на любую аренду!" },
+            { code: "FREE-DAY-PS5", discount: "1 день PS5 БЕСПЛАТНО!" },
+            { code: "PROMO-VR500", discount: "Скидка 500₽ на неделю!" },
+            { code: "MEGA-DEAL", discount: "Скидка 50% на доставку!" },
+            { code: "LUCKY-PLAY", discount: "Бонус час в подарок!" },
+            { code: "VRCITY-200", discount: "200₽ на счёт!" },
+            { code: "WIN-BIG", discount: "Скидка 300₽!" },
+            { code: "JACKPOT-PS", discount: "2 дня со скидкой 40%!" },
+            { code: "GAMER-VIP", discount: "Бесплатный час игры!" },
+            { code: "ULTRA-PRIZE", discount: "1500₽ экономии!" }
+        ];
+
+        // ===== ПЕРЕМЕННЫЕ =====
+        let score = 0;
+        let combo = 1;
+        let username = localStorage.getItem('username') || '';
+        let leaderboardData = JSON.parse(localStorage.getItem('leaderboard')) || [];
+        let lastComboTime = Date.now();
+
+        // ===== ЭЛЕМЕНТЫ =====
+        const clickerBtn = document.getElementById('clickerBtn');
+        const scoreValue = document.getElementById('scoreValue');
+        const comboValue = document.getElementById('comboValue');
+        const comboText = document.getElementById('comboText');
+        const rewardBox = document.getElementById('rewardBox');
+        const promoCode = document.getElementById('promoCode');
+        const resetBtn = document.getElementById('resetBtn');
+        const shareBtn = document.getElementById('shareBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const usernameInput = document.getElementById('usernameInput');
+        const leaderboardList = document.getElementById('leaderboardList');
+
+        // ===== ИНИЦИАЛИЗАЦИЯ =====
+        usernameInput.value = username;
+        updateLeaderboard();
+
+        // ===== СОБЫТИЯ =====
+        clickerBtn.addEventListener('click', handleClick);
+        resetBtn.addEventListener('click', resetGame);
+        shareBtn.addEventListener('click', shareScore);
+        submitBtn.addEventListener('click', submitScore);
+        usernameInput.addEventListener('change', saveUsername);
+
+        // ===== ФУНКЦИИ =====
+        function handleClick() {
+            score += combo;
+            updateUI();
+
+            // Комбо система (сбрасывается через 2 сек без кликов)
+            lastComboTime = Date.now();
+            setTimeout(() => {
+                if (Date.now() - lastComboTime > 2000) {
+                    combo = 1;
+                    updateUI();
+                }
+            }, 2000);
+
+            // Увеличение комбо при быстрых кликах
+            combo += 0.1;
+            combo = Math.floor(combo * 10) / 10;
+
+            // Анимация числа
+            showScorePopup();
+
+            // 10% шанс на приз
+            if (Math.random() < 0.1) {
+                winPrize();
+            }
+        }
+
+        function updateUI() {
+            scoreValue.textContent = score;
+            comboValue.textContent = combo.toFixed(1) + 'x';
+            
+            if (combo > 1) {
+                comboText.textContent = `🔥 КОМБО ${combo.toFixed(1)}x 🔥`;
+            } else {
+                comboText.textContent = '';
+            }
+        }
+
+        function showScorePopup() {
+            const popup = document.createElement('div');
+            popup.className = 'score-popup';
+            popup.textContent = `+${combo.toFixed(0)}`;
+            popup.style.left = '50%';
+            popup.style.top = '50%';
+            popup.style.color = combo > 2 ? '#FFD700' : '#FFFFFF';
+            clickerBtn.parentElement.appendChild(popup);
+
+            setTimeout(() => popup.remove(), 1000);
+        }
+
+        function winPrize() {
+            const randomPromo = promoCodes[Math.floor(Math.random() * promoCodes.length)];
+            promoCode.innerHTML = `<strong>${randomPromo.code}</strong><br>✨ ${randomPromo.discount}`;
+            rewardBox.classList.add('show');
+
+            setTimeout(() => {
+                rewardBox.classList.remove('show');
+            }, 4000);
+        }
+
+        function resetGame() {
+            if (confirm('Ты уверен? Все очки обнулятся!')) {
+                score = 0;
+                combo = 1;
+                rewardBox.classList.remove('show');
+                updateUI();
+            }
+        }
+
+        function saveUsername() {
+            username = usernameInput.value.trim() || 'Аноним';
+            localStorage.setItem('username', username);
+        }
+
+        function submitScore() {
+            if (!username) {
+                saveUsername();
+            }
+
+            if (score === 0) {
+                alert('Набери хотя бы 1 очко! 😅');
+                return;
+            }
+
+            // Добавляем в таблицу
+            const existingIndex = leaderboardData.findIndex(item => item.username === username);
+            const newEntry = { username, score, date: new Date().toISOString() };
+
+            if (existingIndex !== -1) {
+                if (newEntry.score > leaderboardData[existingIndex].score) {
+                    leaderboardData[existingIndex] = newEntry;
+                }
+            } else {
+                leaderboardData.push(newEntry);
+            }
+
+            leaderboardData.sort((a, b) => b.score - a.score);
+            leaderboardData = leaderboardData.slice(0, 10); // Топ 10
+
+            localStorage.setItem('leaderboard', JSON.stringify(leaderboardData));
+            updateLeaderboard();
+
+            alert('✅ Результат отправлен в таблицу рекордов!\n\nАдмин проверит и вышлет приз в конце недели 🎁');
+            resetGame();
+        }
+
+        function updateLeaderboard() {
+            const medals = ['🥇', '🥈', '🥉'];
+            
+            if (leaderboardData.length === 0) {
+                leaderboardList.innerHTML = '<p style="color: #999; padding: 20px;">Таблица пуста. Будь первым! 🚀</p>';
+                return;
+            }
+
+            leaderboardList.innerHTML = leaderboardData
+                .slice(0, 10)
+                .map((item, idx) => `
+                    <div class="leaderboard-item">
+                        <span>
+                            <span class="medal">${medals[idx] || '⭐'}</span>
+                            ${item.username}
+                        </span>
+                        <strong>${item.score}</strong>
+                    </div>
+                `)
+                .join('');
+        }
+
+        function shareScore() {
+            if (score === 0) {
+                alert('Набери очки перед шэарингом! 💪');
+                return;
+            }
+
+            const text = `🎮 Я набрал ${score} очков в VR CITY GAME Тапалке! Присоединяйся и попади в топ! 🏆`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'VR CITY GAME',
+                    text: text
+                });
+            } else {
+                alert(text + '\n\n(Скопируй и отправь друзьям!)');
+            }
+        }
+
+        // Автосохранение прогресса
+        window.addEventListener('beforeunload', () => {
+            localStorage.setItem('lastScore', score);
+            localStorage.setItem('lastCombo', combo);
+        });
+
+        // Восстановление прогресса
+        if (localStorage.getItem('lastScore')) {
+            score = parseInt(localStorage.getItem('lastScore'));
+            combo = parseFloat(localStorage.getItem('lastCombo'));
+            updateUI();
+        }
+    </script>
+</body>
+</html>
