@@ -192,41 +192,6 @@
             min-height: 24px;
         }
 
-        .reward-box {
-            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
-            color: white;
-            padding: 15px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .reward-box.show {
-            display: block;
-            animation: bounce 0.6s ease;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        .reward-box h3 {
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-
-        .promo-code {
-            background: rgba(255, 255, 255, 0.3);
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            word-break: break-all;
-            margin-top: 10px;
-            font-family: 'Courier New', monospace;
-        }
-
         .buttons {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -331,20 +296,6 @@
             border-color: #667eea;
         }
 
-        .game-disabled {
-            background: #f0f0f0;
-            border-radius: 15px;
-            padding: 30px 20px;
-            text-align: center;
-            color: #666;
-        }
-
-        .game-disabled h2 {
-            color: #667eea;
-            margin-bottom: 10px;
-            font-size: 24px;
-        }
-
         .winner-banner {
             background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
             color: white;
@@ -404,8 +355,8 @@
             <h3>📋 Правила:</h3>
             <p>🎯 Тапай весь месяц, набирай очки!</p>
             <p>🏆 В конце месяца топ игрок получит <strong>1 день PS5 БЕСПЛАТНО</strong></p>
-            <p>🎁 <strong>10% шанс</strong> получить промокод в процессе игры!</p>
-            <p>⚡ Больше тапов = больше очков!</p>
+            <p>⚡ Чем больше тапов = чем выше счёт!</p>
+            <p>💪 Лучший результат побеждает!</p>
         </div>
 
         <input type="text" class="username-input" id="usernameInput" placeholder="Введи своё имя или ник 👤" maxlength="20">
@@ -424,12 +375,6 @@
         <div class="game-area" id="gameArea">
             <div class="combo" id="comboText"></div>
             <button class="clicker-button" id="clickerBtn">👆</button>
-
-            <div class="reward-box" id="rewardBox">
-                <h3>🎉 ПОБЕДА! 🎉</h3>
-                <p>Ты выиграл промокод/скидку!</p>
-                <div class="promo-code" id="promoCode"></div>
-            </div>
 
             <div class="buttons">
                 <button class="btn btn-secondary" id="resetBtn">🔄 Заново</button>
@@ -454,20 +399,6 @@
     </div>
 
     <script>
-        // ===== ПРОМОКОДЫ (из 10 вариантов) =====
-        const promoCodes = [
-            { code: "GIFT-PS5-100", discount: "Скидка 100₽ на любую аренду!" },
-            { code: "FREE-DAY-PS5", discount: "1 день PS5 БЕСПЛАТНО!" },
-            { code: "PROMO-VR500", discount: "Скидка 500₽ на неделю!" },
-            { code: "MEGA-DEAL", discount: "Скидка 50% на доставку!" },
-            { code: "LUCKY-PLAY", discount: "Бонус час в подарок!" },
-            { code: "VRCITY-200", discount: "200₽ на счёт!" },
-            { code: "WIN-BIG", discount: "Скидка 300₽!" },
-            { code: "JACKPOT-PS", discount: "2 дня со скидкой 40%!" },
-            { code: "GAMER-VIP", discount: "Бесплатный час игры!" },
-            { code: "ULTRA-PRIZE", discount: "1500₽ экономии!" }
-        ];
-
         // ===== ПЕРЕМЕННЫЕ =====
         let score = 0;
         let combo = 1;
@@ -482,8 +413,6 @@
         const scoreValue = document.getElementById('scoreValue');
         const comboValue = document.getElementById('comboValue');
         const comboText = document.getElementById('comboText');
-        const rewardBox = document.getElementById('rewardBox');
-        const promoCode = document.getElementById('promoCode');
         const resetBtn = document.getElementById('resetBtn');
         const shareBtn = document.getElementById('shareBtn');
         const submitBtn = document.getElementById('submitBtn');
@@ -581,11 +510,6 @@
             combo = Math.floor(combo * 10) / 10;
 
             showScorePopup();
-
-            // 10% шанс на приз
-            if (Math.random() < 0.1) {
-                winPrize();
-            }
         }
 
         function updateUI() {
@@ -611,21 +535,10 @@
             setTimeout(() => popup.remove(), 1000);
         }
 
-        function winPrize() {
-            const randomPromo = promoCodes[Math.floor(Math.random() * promoCodes.length)];
-            promoCode.innerHTML = `<strong>${randomPromo.code}</strong><br>✨ ${randomPromo.discount}`;
-            rewardBox.classList.add('show');
-
-            setTimeout(() => {
-                rewardBox.classList.remove('show');
-            }, 4000);
-        }
-
         function resetGame() {
             if (confirm('Ты уверен? Все очки обнулятся!')) {
                 score = 0;
                 combo = 1;
-                rewardBox.classList.remove('show');
                 updateUI();
             }
         }
@@ -671,7 +584,7 @@
             localStorage.setItem('leaderboard', JSON.stringify(leaderboardData));
             updateLeaderboard();
 
-            alert(`✅ Результат сохранён!\n\nТвой счёт: ${score}\n\nВ конце месяца админ проверит и вышлет приз победителю! 🎁`);
+            alert(`✅ Результат сохранён!\n\nТвой счёт: ${score}\n\nВ конце месяца админ проверит и наградит топ игрока! 🏆`);
         }
 
         function updateLeaderboard() {
