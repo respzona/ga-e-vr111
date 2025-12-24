@@ -315,6 +315,31 @@
             margin: 5px 0;
         }
 
+        .promo-box {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .promo-code {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            word-break: break-all;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            color: white;
+        }
+
+        .promo-desc {
+            font-size: 14px;
+            margin-top: 8px;
+            color: white;
+        }
+
         @media (max-width: 600px) {
             .container {
                 padding: 20px;
@@ -354,7 +379,7 @@
         <div class="rules">
             <h3>📋 Правила:</h3>
             <p>🎯 Тапай весь месяц, набирай очки!</p>
-            <p>🏆 В конце месяца топ игрок получит <strong>1 день PS5 БЕСПЛАТНО</strong></p>
+            <p>🏆 В конце месяца топ игрок получит <strong>1 день PS5 БЕСПЛАТНО + ПРОМОКОД!</strong></p>
             <p>⚡ Чем больше тапов = чем выше счёт!</p>
             <p>💪 Лучший результат побеждает!</p>
         </div>
@@ -391,14 +416,34 @@
         <div id="seasonEndedInfo" style="display: none;">
             <div class="winner-banner">
                 <h2>🎉 СЕЗОН ЗАВЕРШЁН! 🎉</h2>
-                <p>Результаты отправлены администратору</p>
+                <p>Поздравляем победителя!</p>
                 <p id="winnerInfo"></p>
+                
+                <div class="promo-box">
+                    <div style="font-size: 14px; margin-bottom: 10px;">✨ ГЛАВНЫЙ ПРИЗ:</div>
+                    <div class="promo-code" id="winnersPromo"></div>
+                    <div class="promo-desc" id="winnersPromoDesc"></div>
+                    <div style="font-size: 12px; margin-top: 15px; opacity: 0.9;">+ 1 день PS5 БЕСПЛАТНО!</div>
+                </div>
             </div>
-            <button class="btn btn-primary" id="nextSeasonBtn">Начать новый сезон</button>
         </div>
     </div>
 
     <script>
+        // ===== ПРОМОКОДЫ (10 вариантов) =====
+        const promoCodes = [
+            { code: "GIFT-PS5-100", discount: "Скидка 100₽ на любую аренду!" },
+            { code: "FREE-DAY-PS5", discount: "1 день PS5 БЕСПЛАТНО!" },
+            { code: "PROMO-VR500", discount: "Скидка 500₽ на неделю!" },
+            { code: "MEGA-DEAL", discount: "Скидка 50% на доставку!" },
+            { code: "LUCKY-PLAY", discount: "Бонус час в подарок!" },
+            { code: "VRCITY-200", discount: "200₽ на счёт!" },
+            { code: "WIN-BIG", discount: "Скидка 300₽!" },
+            { code: "JACKPOT-PS", discount: "2 дня со скидкой 40%!" },
+            { code: "GAMER-VIP", discount: "Бесплатный час игры!" },
+            { code: "ULTRA-PRIZE", discount: "1500₽ экономии!" }
+        ];
+
         // ===== ПЕРЕМЕННЫЕ =====
         let score = 0;
         let combo = 1;
@@ -442,11 +487,6 @@
 
         // ===== ФУНКЦИИ =====
 
-        function getLastDayOfMonth() {
-            const now = new Date();
-            return new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-        }
-
         function getDaysUntilEndOfMonth() {
             const now = new Date();
             const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
@@ -489,6 +529,11 @@
                     <strong style="font-size: 20px;">🥇 ${winner.username}</strong><br>
                     Счёт: <strong>${winner.score}</strong>
                 `;
+
+                // Выбираем случайный промокод для победителя
+                const winnerPromo = promoCodes[Math.floor(Math.random() * promoCodes.length)];
+                document.getElementById('winnersPromo').textContent = winnerPromo.code;
+                document.getElementById('winnersPromoDesc').textContent = '✨ ' + winnerPromo.discount;
             }
         }
 
